@@ -2,6 +2,10 @@ package com.jorgerosas.freeappblocker.utils
 
 import com.jorgerosas.freeappblocker.entity.PackageSettings
 import com.jorgerosas.freeappblocker.entity.SessionLimitRule
+import com.jorgerosas.freeappblocker.entity.TimeRestriction
+import com.jorgerosas.freeappblocker.entity.TimeRestrictionsRule
+import java.time.DayOfWeek
+import java.time.LocalTime
 
 object Constants {
     const val TAG = "MY_EVENTS"
@@ -14,20 +18,29 @@ object Constants {
             name = "com.whatsapp",
             sessionLimitRule = SessionLimitRule(
                 maxSessionMs = 3000,
+            ),
+            timeRestrictionsRule = TimeRestrictionsRule(
+                restrictions = listOf(
+                    TimeRestriction(
+                        day = DayOfWeek.SUNDAY,
+                        start = LocalTime.of(12, 0),
+                        end = LocalTime.of(15, 0),
+                    )
+                )
             )
         ),
         "com.instagram.android" to PackageSettings(
             name = "com.instagram.android",
             sessionLimitRule = SessionLimitRule(
-                maxSessionMs = 1000,
-            )
+                maxSessionMs = 3000,
+            ),
         ),
         "com.android.chrome" to PackageSettings(
             name = "com.android.chrome",
             sessionLimitRule = SessionLimitRule(
                 maxSessionMs = 10000,
                 blockMs = 10000,
-            )
+            ),
         ),
     )
 }
