@@ -19,7 +19,7 @@ class PackageTrackingService : AccessibilityService() {
     private val checkPackageTask = object : Runnable {
         override fun run() {
             this@PackageTrackingService.currentPackage?.let { packageName ->
-                Rules.INSTANCE.checkCurrentPackageRules(
+                Rules.INSTANCE.checkPackageState(
                     packageName,
                     startTimeMs
                 ) { shouldBlock ->
@@ -47,13 +47,17 @@ class PackageTrackingService : AccessibilityService() {
                 handler.removeCallbacks(checkPackageTask)
                 currentPackage = newPackage
 
-                if (Rules.INSTANCE.shouldBlockPackageFromOpening(newPackage)) {
-                    showBlockingScreen(
-                        context = this
-                    )
-                } else if (Rules.INSTANCE.shouldCheckPackage(newPackage)) {
-                    startTimeMs = System.currentTimeMillis()
-                    handler.postDelayed(checkPackageTask, USAGE_CHECK_MS)
+                Rules.INSTANCE.checkPackageOpening(
+                    newPackage
+                ) { shouldBlock ->
+                    if (shouldBlock) {
+                        showBlockingScreen(
+                            context = this
+                        )
+                    } else if (Rules.INSTANCE.shouldCheckPackage(newPackage)) {
+                        startTimeMs = System.currentTimeMillis()
+                        handler.postDelayed(checkPackageTask, USAGE_CHECK_MS)
+                    }
                 }
             }
         }

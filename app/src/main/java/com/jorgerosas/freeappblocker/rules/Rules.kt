@@ -13,10 +13,14 @@ class Rules private constructor() {
 
     fun shouldCheckPackage(packageName: String) = APPS.keys.contains(packageName)
 
-    fun shouldBlockPackageFromOpening(packageName: String): Boolean {
-        val packageSettings = APPS[packageName]
+    fun checkPackageOpening(
+        packageName: String,
+        shouldBlock: (Boolean) -> Unit
+    ) {
+        Log.d(TAG, "CHECK OPEN $packageName")
+        var result = false
 
-        packageSettings?.sessionLimitRule?.let { sessionLimitRule ->
+        APPS[packageName]?.sessionLimitRule?.let { sessionLimitRule ->
             lastBlockedTimesMs[packageName]?.let { lastBlockedTimeMs ->
                 val elapsedMs = System.currentTimeMillis() - lastBlockedTimeMs
                 if (elapsedMs < sessionLimitRule.blockMs) {
@@ -24,20 +28,21 @@ class Rules private constructor() {
                         TAG,
                         "BLOCK OPEN $packageName - session rule [elapsed:$elapsedMs][blocked:${sessionLimitRule.blockMs}}"
                     )
-                    return true
+
+                    result = true
                 }
             }
         }
 
-        return false
+        shouldBlock(result)
     }
 
-    fun checkCurrentPackageRules(
+    fun checkPackageState(
         packageName: String,
         startTimeMs: Long,
         shouldBlock: (Boolean) -> Unit,
     ) {
-        Log.d(TAG, "CHECK $packageName")
+        Log.d(TAG, "CHECK CURRENT $packageName")
         var result = false
 
         APPS[packageName]?.sessionLimitRule?.let { sessionLimitRule ->
