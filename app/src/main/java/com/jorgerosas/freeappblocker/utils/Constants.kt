@@ -1,5 +1,6 @@
 package com.jorgerosas.freeappblocker.utils
 
+import com.jorgerosas.freeappblocker.entity.DailyUsageRule
 import com.jorgerosas.freeappblocker.entity.PackageSettings
 import com.jorgerosas.freeappblocker.entity.SessionLimitRule
 import com.jorgerosas.freeappblocker.entity.TimeRestriction
@@ -33,6 +34,9 @@ object Constants {
             name = "com.instagram.android",
             sessionLimitRule = SessionLimitRule(
                 maxSessionMs = 3000,
+            ),
+            dailyUsageRule = DailyUsageRule(
+                dailyLimitMs = 10 * 60 * 1000
             ),
         ),
         "com.android.chrome" to PackageSettings(

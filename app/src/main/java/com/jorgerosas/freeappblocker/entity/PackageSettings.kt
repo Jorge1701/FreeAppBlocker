@@ -7,6 +7,7 @@ data class PackageSettings(
     val name: String,
     val sessionLimitRule: SessionLimitRule? = null,
     val timeRestrictionsRule: TimeRestrictionsRule? = null,
+    val dailyUsageRule: DailyUsageRule? = null,
 )
 
 data class SessionLimitRule(
@@ -22,4 +23,8 @@ data class TimeRestriction(
     val day: DayOfWeek,
     val start: LocalTime,
     val end: LocalTime,
+)
+
+data class DailyUsageRule(
+    val dailyLimitMs: Long,
 )

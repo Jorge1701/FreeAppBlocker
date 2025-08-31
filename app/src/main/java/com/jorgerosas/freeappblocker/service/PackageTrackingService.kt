@@ -48,7 +48,8 @@ class PackageTrackingService : AccessibilityService() {
                 currentPackage = newPackage
 
                 Rules.INSTANCE.checkPackageOpening(
-                    newPackage
+                    context = this,
+                    newPackage,
                 ) { shouldBlock ->
                     if (shouldBlock) {
                         showBlockingScreen(
