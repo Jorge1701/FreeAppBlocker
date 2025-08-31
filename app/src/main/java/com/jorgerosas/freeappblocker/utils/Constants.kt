@@ -18,14 +18,11 @@ object Constants {
     val APPS_CONFIG = mapOf(
         "com.whatsapp" to PackageSettings(
             name = "com.whatsapp",
-            sessionLimitRule = SessionLimitRuleConfig(
-                maxSessionMs = 3000,
-            ),
             timeRestrictionsRule = TimeRestrictionsRuleConfig(
                 restrictions = listOf(
                     TimeRestriction(
                         day = DayOfWeek.SUNDAY,
-                        start = LocalTime.of(9, 52),
+                        start = LocalTime.of(11, 47),
                         end = LocalTime.of(15, 0),
                     )
                 ),

@@ -44,11 +44,44 @@ class Rules private constructor() {
 
         config?.timeRestrictionsRule?.let { timeRestrictionsRule ->
             findTimeRestriction(timeRestrictionsRule)?.let { timeRestriction ->
-                Log.d(
-                    TAG,
-                    "BLOCK OPEN $packageName [day:${timeRestriction.day}][start:${timeRestriction.start}][end:${timeRestriction.end}]"
-                )
-                result = true
+                val extension = timeRestrictionsRule.extension
+                if (extension == null) {
+                    result = true
+                } else {
+                    val consumedExtensions = Extensions.INSTANCE.getConsumedExtensions(
+                        packageName,
+                        RuleType.TIME_RESTRICTION,
+                    )
+
+                    if (consumedExtensions >= extension.amount) {
+                        result = true
+                    } else {
+                        val hasActiveExtension = Extensions.INSTANCE.hasActiveExtension(
+                            packageName,
+                            RuleType.TIME_RESTRICTION,
+                            extension.extensionTimeMs,
+                        )
+                        if (!hasActiveExtension) {
+                            if (Random.nextBoolean()) {
+                                Log.d(TAG, "EXTENSION YES")
+                                Extensions.INSTANCE.consumeExtension(
+                                    packageName,
+                                    RuleType.TIME_RESTRICTION,
+                                )
+                            } else {
+                                Log.d(TAG, "EXTENSION NO")
+                                result = true
+                            }
+                        }
+                    }
+                }
+
+                if (result) {
+                    Log.d(
+                        TAG,
+                        "BLOCK OPEN $packageName [day:${timeRestriction.day}][start:${timeRestriction.start}][end:${timeRestriction.end}]"
+                    )
+                }
             }
         }
 
@@ -128,11 +161,26 @@ class Rules private constructor() {
 
         config?.timeRestrictionsRule?.let { timeRestrictionsRule ->
             findTimeRestriction(timeRestrictionsRule)?.let { timeRestriction ->
-                Log.d(
-                    TAG,
-                    "BLOCK USAGE $packageName [day:${timeRestriction.day}][start:${timeRestriction.start}][end:${timeRestriction.end}]"
-                )
-                result = true
+                val extension = timeRestrictionsRule.extension
+                if (extension == null) {
+                    result = true
+                } else {
+                    val hasActiveExtension = Extensions.INSTANCE.hasActiveExtension(
+                        packageName,
+                        RuleType.TIME_RESTRICTION,
+                        extension.extensionTimeMs,
+                    )
+                    if (!hasActiveExtension) {
+                        result = true
+                    }
+                }
+
+                if (result) {
+                    Log.d(
+                        TAG,
+                        "BLOCK USAGE $packageName [day:${timeRestriction.day}][start:${timeRestriction.start}][end:${timeRestriction.end}]"
+                    )
+                }
             }
         }
 
