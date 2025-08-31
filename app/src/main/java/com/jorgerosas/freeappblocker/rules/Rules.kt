@@ -32,20 +32,26 @@ class Rules private constructor() {
         return false
     }
 
-    fun checkCurrentPackageRules(packageName: String, sessionTimeMs: Long): Boolean {
-        val packageSettings = APPS[packageName]
+    fun checkCurrentPackageRules(
+        packageName: String,
+        startTimeMs: Long,
+        shouldBlock: (Boolean) -> Unit,
+    ) {
+        Log.d(TAG, "CHECK $packageName")
+        var result = false
 
-        packageSettings?.sessionLimitRule?.let { sessionLimitRule ->
+        APPS[packageName]?.sessionLimitRule?.let { sessionLimitRule ->
+            val sessionTimeMs = System.currentTimeMillis() - startTimeMs
             if (sessionTimeMs > sessionLimitRule.maxSessionMs) {
-                lastBlockedTimesMs[packageName] = System.currentTimeMillis()
                 Log.d(
                     TAG,
-                    "BLOCK USAGE $packageName [current_session:$sessionTimeMs][max_session:${sessionLimitRule.maxSessionMs}]"
+                    "BLOCK USAGE $packageName [session_time:$sessionTimeMs][max_session:${sessionLimitRule.maxSessionMs}]"
                 )
-                return true
+                lastBlockedTimesMs[packageName] = System.currentTimeMillis()
+                result = true
             }
         }
 
-        return false
+        shouldBlock(result)
     }
 }

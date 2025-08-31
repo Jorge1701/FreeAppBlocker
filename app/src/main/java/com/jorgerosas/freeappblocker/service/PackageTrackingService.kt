@@ -11,27 +11,23 @@ import com.jorgerosas.freeappblocker.utils.Constants.USAGE_CHECK_MS
 import com.jorgerosas.freeappblocker.utils.getCurrentPackage
 import com.jorgerosas.freeappblocker.utils.showBlockingScreen
 
-class ForegroundAppTrackingService : AccessibilityService() {
+class PackageTrackingService : AccessibilityService() {
     private var currentPackage: String? = null
     private var startTimeMs: Long = 0
 
     private val handler = Handler(Looper.getMainLooper())
-    private val timerTask = object : Runnable {
+    private val checkPackageTask = object : Runnable {
         override fun run() {
-            this@ForegroundAppTrackingService.currentPackage?.let { packageName ->
-                val currentPackageUseTimeMs = System.currentTimeMillis() - startTimeMs
-                Log.d(TAG, "CHECK $packageName [current_session:$currentPackageUseTimeMs]")
-
+            this@PackageTrackingService.currentPackage?.let { packageName ->
                 Rules.INSTANCE.checkCurrentPackageRules(
-                    packageName = packageName,
-                    sessionTimeMs = currentPackageUseTimeMs
-                ).let { shouldBlock ->
+                    packageName,
+                    startTimeMs
+                ) { shouldBlock ->
                     if (shouldBlock) {
                         showBlockingScreen(
-                            context = this@ForegroundAppTrackingService
+                            context = this@PackageTrackingService
                         )
                     } else {
-                        // Schedule next check
                         handler.postDelayed(this, USAGE_CHECK_MS)
                     }
                 }
@@ -46,27 +42,18 @@ class ForegroundAppTrackingService : AccessibilityService() {
             ) ?: return
 
             if (newPackage != currentPackage) {
-                handler.removeCallbacks(timerTask)
-
-                if (!currentPackage.isNullOrEmpty()) {
-                    Log.d(TAG, "CLOSED ${this.currentPackage}");
-                }
-
                 Log.d(TAG, "OPENED $newPackage");
+
+                handler.removeCallbacks(checkPackageTask)
+                currentPackage = newPackage
 
                 if (Rules.INSTANCE.shouldBlockPackageFromOpening(newPackage)) {
                     showBlockingScreen(
                         context = this
                     )
-
-                    return
-                }
-
-                startTimeMs = System.currentTimeMillis()
-                currentPackage = newPackage
-
-                if (Rules.INSTANCE.shouldCheckPackage(currentPackage!!)) {
-                    handler.postDelayed(timerTask, USAGE_CHECK_MS)
+                } else if (Rules.INSTANCE.shouldCheckPackage(newPackage)) {
+                    startTimeMs = System.currentTimeMillis()
+                    handler.postDelayed(checkPackageTask, USAGE_CHECK_MS)
                 }
             }
         }
