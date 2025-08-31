@@ -20,8 +20,9 @@ class PackageTrackingService : AccessibilityService() {
         override fun run() {
             this@PackageTrackingService.currentPackage?.let { packageName ->
                 Rules.INSTANCE.checkPackageState(
+                    context = this@PackageTrackingService,
                     packageName,
-                    startTimeMs
+                    startTimeMs,
                 ) { shouldBlock ->
                     if (shouldBlock) {
                         showBlockingScreen(
@@ -48,7 +49,8 @@ class PackageTrackingService : AccessibilityService() {
                 currentPackage = newPackage
 
                 Rules.INSTANCE.checkPackageOpening(
-                    newPackage
+                    context = this,
+                    newPackage,
                 ) { shouldBlock ->
                     if (shouldBlock) {
                         showBlockingScreen(

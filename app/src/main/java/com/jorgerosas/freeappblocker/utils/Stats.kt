@@ -13,7 +13,7 @@ class Stats private constructor() {
         val INSTANCE = Stats()
     }
 
-    fun getTodayUsageInMsFor(context: Context, packageName: String): Long {
+    fun getLastReportedUsageMs(context: Context, packageName: String): Long {
         return queryStats(
             context,
             beginTime = startOfToday()
