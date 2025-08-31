@@ -1,7 +1,7 @@
 package com.jorgerosas.freeappblocker.rules
 
 import android.util.Log
-import com.jorgerosas.freeappblocker.entity.APPS
+import com.jorgerosas.freeappblocker.utils.Constants.APPS_CONFIG
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
 
 class Rules private constructor() {
@@ -11,7 +11,7 @@ class Rules private constructor() {
 
     private val lastBlockedTimesMs = mutableMapOf<String, Long>()
 
-    fun shouldCheckPackage(packageName: String) = APPS.keys.contains(packageName)
+    fun shouldCheckPackage(packageName: String) = APPS_CONFIG.keys.contains(packageName)
 
     fun checkPackageOpening(
         packageName: String,
@@ -20,7 +20,7 @@ class Rules private constructor() {
         Log.d(TAG, "CHECK OPEN $packageName")
         var result = false
 
-        APPS[packageName]?.sessionLimitRule?.let { sessionLimitRule ->
+        APPS_CONFIG[packageName]?.sessionLimitRule?.let { sessionLimitRule ->
             lastBlockedTimesMs[packageName]?.let { lastBlockedTimeMs ->
                 val elapsedMs = System.currentTimeMillis() - lastBlockedTimeMs
                 if (elapsedMs < sessionLimitRule.blockMs) {
@@ -45,7 +45,7 @@ class Rules private constructor() {
         Log.d(TAG, "CHECK CURRENT $packageName")
         var result = false
 
-        APPS[packageName]?.sessionLimitRule?.let { sessionLimitRule ->
+        APPS_CONFIG[packageName]?.sessionLimitRule?.let { sessionLimitRule ->
             val sessionTimeMs = System.currentTimeMillis() - startTimeMs
             if (sessionTimeMs > sessionLimitRule.maxSessionMs) {
                 Log.d(
