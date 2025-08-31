@@ -5,8 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import com.jorgerosas.freeappblocker.utils.Constants.PACKAGES_TO_CHECK
-import com.jorgerosas.freeappblocker.utils.Constants.FIXED_LIMIT_MS
+import com.jorgerosas.freeappblocker.rules.Rules
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
 import com.jorgerosas.freeappblocker.utils.Constants.USAGE_CHECK_MS
 import com.jorgerosas.freeappblocker.utils.getCurrentPackage
@@ -19,18 +18,23 @@ class ForegroundAppTrackingService : AccessibilityService() {
     private val handler = Handler(Looper.getMainLooper())
     private val timerTask = object : Runnable {
         override fun run() {
-            this@ForegroundAppTrackingService.currentPackage?.let {
+            this@ForegroundAppTrackingService.currentPackage?.let { packageName ->
                 val currentPackageUseTimeMs = System.currentTimeMillis() - startTimeMs
-                Log.d(TAG, "USE $it - ${currentPackageUseTimeMs / 1000}s")
+                Log.d(TAG, "CHECK $packageName [current_session:$currentPackageUseTimeMs]")
 
-                if (currentPackageUseTimeMs >= FIXED_LIMIT_MS) {
-                    Log.d(TAG, "BLOCK $it")
-                    this@ForegroundAppTrackingService.showBlockingScreen()
-                    return
+                Rules.INSTANCE.checkCurrentPackageRules(
+                    packageName = packageName,
+                    sessionTimeMs = currentPackageUseTimeMs
+                ).let { shouldBlock ->
+                    if (shouldBlock) {
+                        showBlockingScreen(
+                            context = this@ForegroundAppTrackingService
+                        )
+                    } else {
+                        // Schedule next check
+                        handler.postDelayed(this, USAGE_CHECK_MS)
+                    }
                 }
-
-                // Schedule next tick in 1 minute
-                handler.postDelayed(this, USAGE_CHECK_MS)
             }
         }
     }
@@ -48,10 +52,18 @@ class ForegroundAppTrackingService : AccessibilityService() {
 
                 Log.d(TAG, "OPENED $newPackage");
 
-                startTimeMs = System.currentTimeMillis()
-                currentPackage = newPackage;
+                if (Rules.INSTANCE.shouldBlockPackageFromOpening(newPackage)) {
+                    showBlockingScreen(
+                        context = this
+                    )
 
-                if (PACKAGES_TO_CHECK.contains(currentPackage)) {
+                    return
+                }
+
+                startTimeMs = System.currentTimeMillis()
+                currentPackage = newPackage
+
+                if (Rules.INSTANCE.shouldCheckPackage(currentPackage!!)) {
                     handler.postDelayed(timerTask, USAGE_CHECK_MS)
                 }
             }
