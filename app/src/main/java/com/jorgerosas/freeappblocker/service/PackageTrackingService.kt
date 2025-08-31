@@ -22,7 +22,7 @@ class PackageTrackingService : AccessibilityService() {
                 Rules.INSTANCE.checkPackageState(
                     context = this@PackageTrackingService,
                     packageName,
-                    startTimeMs
+                    startTimeMs,
                 ) { shouldBlock ->
                     if (shouldBlock) {
                         showBlockingScreen(
