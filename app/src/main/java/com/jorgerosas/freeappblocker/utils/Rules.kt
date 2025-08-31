@@ -90,13 +90,13 @@ class Rules private constructor() {
                         }
                     }
                 }
+            }
 
-                if (result) {
-                    Log.d(
-                        TAG,
-                        "BLOCK OPEN $packageName [today_usage:$todayUsageMs][daily_limit:${dailyUsageRule.dailyLimitMs}]"
-                    )
-                }
+            if (result) {
+                Log.d(
+                    TAG,
+                    "BLOCK OPEN $packageName [today_usage:$todayUsageMs][daily_limit:${dailyUsageRule.dailyLimitMs}]"
+                )
             }
         }
 
