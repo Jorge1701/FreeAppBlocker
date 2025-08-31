@@ -1,27 +1,53 @@
 package com.jorgerosas.freeappblocker.service
 
 import android.accessibilityservice.AccessibilityService
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import com.jorgerosas.freeappblocker.utils.Constants.FIXED_LIMIT_MS
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
-import com.jorgerosas.freeappblocker.utils.getForegroundApp
+import com.jorgerosas.freeappblocker.utils.Constants.USAGE_CHECK_MS
+import com.jorgerosas.freeappblocker.utils.getCurrentPackage
 
 class ForegroundAppTrackingService : AccessibilityService() {
-    private var lastPackage = ""
+    private var currentPackage: String? = null
+    private var startTimeMs: Long = 0
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val timerTask = object : Runnable {
+        override fun run() {
+            this@ForegroundAppTrackingService.currentPackage?.let {
+                val currentPackageUseTimeMs = System.currentTimeMillis() - startTimeMs
+                Log.d(TAG, "USE $it - ${currentPackageUseTimeMs / 1000}s")
+
+                if (currentPackageUseTimeMs >= FIXED_LIMIT_MS) {
+                    Log.d(TAG, "BLOCK $it")
+                    return
+                }
+
+                // Schedule next tick in 1 minute
+                handler.postDelayed(this, USAGE_CHECK_MS)
+            }
+        }
+    }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            val foregroundApp = baseContext.getForegroundApp() ?: return
+            val newPackage = baseContext.getCurrentPackage() ?: return
 
-            if (foregroundApp != lastPackage) {
-                if (lastPackage.isNotEmpty()) {
-                    Log.d(TAG, "CLOSED $lastPackage");
-                }
-                if (foregroundApp.isNotEmpty()) {
-                    Log.d(TAG, "OPENED $foregroundApp");
+            if (newPackage != currentPackage) {
+                if (!currentPackage.isNullOrEmpty()) {
+                    Log.d(TAG, "CLOSED ${this.currentPackage}");
                 }
 
-                lastPackage = foregroundApp;
+                Log.d(TAG, "OPENED $newPackage");
+
+                startTimeMs = System.currentTimeMillis()
+                currentPackage = newPackage;
+
+                handler.removeCallbacks(timerTask)
+                handler.postDelayed(timerTask, USAGE_CHECK_MS)
             }
         }
     }
