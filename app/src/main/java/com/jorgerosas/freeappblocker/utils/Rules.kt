@@ -2,11 +2,13 @@ package com.jorgerosas.freeappblocker.utils
 
 import android.content.Context
 import android.util.Log
+import com.jorgerosas.freeappblocker.entity.RuleType
 import com.jorgerosas.freeappblocker.entity.TimeRestriction
-import com.jorgerosas.freeappblocker.entity.TimeRestrictionsRule
+import com.jorgerosas.freeappblocker.entity.TimeRestrictionsRuleConfig
 import com.jorgerosas.freeappblocker.utils.Constants.APPS_CONFIG
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
 import java.time.LocalDateTime
+import kotlin.random.Random
 
 class Rules private constructor() {
     companion object {
@@ -57,11 +59,44 @@ class Rules private constructor() {
             )
 
             if (todayUsageMs > dailyUsageRule.dailyLimitMs) {
+                val extension = dailyUsageRule.extension
+                if (extension == null) {
+                    result = true
+                } else {
+                    val consumedExtensions = Extensions.INSTANCE.getConsumedExtensions(
+                        packageName,
+                        RuleType.DAILY_USAGE,
+                    )
+
+                    if (consumedExtensions >= extension.amount) {
+                        result = true
+                    } else {
+                        val hasActiveExtension = Extensions.INSTANCE.hasActiveExtension(
+                            packageName,
+                            RuleType.DAILY_USAGE,
+                            extension.extensionTimeMs,
+                        )
+                        if (!hasActiveExtension) {
+                            if (Random.nextBoolean()) {
+                                Log.d(TAG, "EXTENSION YES")
+                                Extensions.INSTANCE.consumeExtension(
+                                    packageName,
+                                    RuleType.DAILY_USAGE,
+                                )
+                            } else {
+                                Log.d(TAG, "EXTENSION NO")
+                                result = true
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (result) {
                 Log.d(
                     TAG,
                     "BLOCK OPEN $packageName [today_usage:$todayUsageMs][daily_limit:${dailyUsageRule.dailyLimitMs}]"
                 )
-                result = true
             }
         }
 
@@ -109,18 +144,33 @@ class Rules private constructor() {
             ) + sessionTimeMs
 
             if (todayUsageMs > dailyUsageRule.dailyLimitMs) {
+                val extension = dailyUsageRule.extension
+                if (extension == null) {
+                    result = true
+                } else {
+                    val hasActiveExtension = Extensions.INSTANCE.hasActiveExtension(
+                        packageName,
+                        RuleType.DAILY_USAGE,
+                        extension.extensionTimeMs,
+                    )
+                    if (!hasActiveExtension) {
+                        result = true
+                    }
+                }
+            }
+
+            if (result) {
                 Log.d(
                     TAG,
                     "BLOCK USAGE $packageName [today_usage:$todayUsageMs][daily_limit:${dailyUsageRule.dailyLimitMs}]"
                 )
-                result = true
             }
         }
 
         shouldBlock(result)
     }
 
-    private fun findTimeRestriction(rule: TimeRestrictionsRule): TimeRestriction? {
+    private fun findTimeRestriction(rule: TimeRestrictionsRuleConfig): TimeRestriction? {
         val dateTime = LocalDateTime.now()
 
         val day = dateTime.dayOfWeek

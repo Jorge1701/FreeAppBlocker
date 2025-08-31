@@ -1,10 +1,11 @@
 package com.jorgerosas.freeappblocker.utils
 
-import com.jorgerosas.freeappblocker.entity.DailyUsageRule
+import com.jorgerosas.freeappblocker.entity.DailyUsageRuleConfig
 import com.jorgerosas.freeappblocker.entity.PackageSettings
-import com.jorgerosas.freeappblocker.entity.SessionLimitRule
+import com.jorgerosas.freeappblocker.entity.RuleExtensionConfig
+import com.jorgerosas.freeappblocker.entity.SessionLimitRuleConfig
 import com.jorgerosas.freeappblocker.entity.TimeRestriction
-import com.jorgerosas.freeappblocker.entity.TimeRestrictionsRule
+import com.jorgerosas.freeappblocker.entity.TimeRestrictionsRuleConfig
 import java.time.DayOfWeek
 import java.time.LocalTime
 
@@ -17,28 +18,36 @@ object Constants {
     val APPS_CONFIG = mapOf(
         "com.whatsapp" to PackageSettings(
             name = "com.whatsapp",
-            sessionLimitRule = SessionLimitRule(
+            sessionLimitRule = SessionLimitRuleConfig(
                 maxSessionMs = 3000,
             ),
-            timeRestrictionsRule = TimeRestrictionsRule(
+            timeRestrictionsRule = TimeRestrictionsRuleConfig(
                 restrictions = listOf(
                     TimeRestriction(
                         day = DayOfWeek.SUNDAY,
-                        start = LocalTime.of(12, 0),
+                        start = LocalTime.of(9, 52),
                         end = LocalTime.of(15, 0),
                     )
+                ),
+                extension = RuleExtensionConfig(
+                    amount = 3,
+                    extensionTimeMs = 10_000,
                 )
             )
         ),
         "com.instagram.android" to PackageSettings(
             name = "com.instagram.android",
-            dailyUsageRule = DailyUsageRule(
-                dailyLimitMs = (60 * 60 * 1000).toLong()
+            dailyUsageRule = DailyUsageRuleConfig(
+                dailyLimitMs = (26 * 60 * 1000).toLong(),
+                extension = RuleExtensionConfig(
+                    amount = 2,
+                    extensionTimeMs = 5_000,
+                )
             ),
         ),
         "com.android.chrome" to PackageSettings(
             name = "com.android.chrome",
-            sessionLimitRule = SessionLimitRule(
+            sessionLimitRule = SessionLimitRuleConfig(
                 maxSessionMs = 10000,
                 blockMs = 10000,
             ),

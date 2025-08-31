@@ -43,8 +43,6 @@ class PackageTrackingService : AccessibilityService() {
             ) ?: return
 
             if (newPackage != currentPackage) {
-                Log.d(TAG, "OPENED $newPackage");
-
                 handler.removeCallbacks(checkPackageTask)
                 currentPackage = newPackage
 

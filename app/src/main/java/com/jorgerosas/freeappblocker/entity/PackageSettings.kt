@@ -5,18 +5,25 @@ import java.time.LocalTime
 
 data class PackageSettings(
     val name: String,
-    val sessionLimitRule: SessionLimitRule? = null,
-    val timeRestrictionsRule: TimeRestrictionsRule? = null,
-    val dailyUsageRule: DailyUsageRule? = null,
+    val sessionLimitRule: SessionLimitRuleConfig? = null,
+    val timeRestrictionsRule: TimeRestrictionsRuleConfig? = null,
+    val dailyUsageRule: DailyUsageRuleConfig? = null,
 )
 
-data class SessionLimitRule(
+enum class RuleType {
+    SESSION_LIMIT,
+    TIME_RESTRICTION,
+    DAILY_USAGE,
+}
+
+data class SessionLimitRuleConfig(
     val maxSessionMs: Long,
     val blockMs: Long = -1,
 )
 
-data class TimeRestrictionsRule(
-    val restrictions: List<TimeRestriction>
+data class TimeRestrictionsRuleConfig(
+    val restrictions: List<TimeRestriction>,
+    val extension: RuleExtensionConfig? = null,
 )
 
 data class TimeRestriction(
@@ -25,6 +32,12 @@ data class TimeRestriction(
     val end: LocalTime,
 )
 
-data class DailyUsageRule(
+data class DailyUsageRuleConfig(
     val dailyLimitMs: Long,
+    val extension: RuleExtensionConfig? = null,
+)
+
+data class RuleExtensionConfig(
+    val amount: Int,
+    val extensionTimeMs: Long,
 )
