@@ -3,6 +3,7 @@ package com.jorgerosas.freeappblocker.utils
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import com.jorgerosas.freeappblocker.utils.Constants.QUERY_STATS_INTERVAL_MS
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
@@ -25,4 +26,12 @@ fun Context.getCurrentPackage(): String? {
 
     // Find the package with the latest lastTimeUsed
     return stats.maxByOrNull { it.lastTimeUsed }?.packageName
+}
+
+fun Context.goHome() {
+    val intent = Intent(Intent.ACTION_MAIN).apply {
+        addCategory(Intent.CATEGORY_HOME)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+    startActivity(intent)
 }

@@ -13,6 +13,10 @@ class PermissionsView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.permissions_view)
 
+        findViewById<Button>(R.id.btnGrantOverlayPermissions).setOnClickListener {
+            startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
+        }
+
         findViewById<Button>(R.id.btnGrantUsagePermissions).setOnClickListener {
             startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
         }

@@ -9,6 +9,7 @@ import com.jorgerosas.freeappblocker.utils.Constants.FIXED_LIMIT_MS
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
 import com.jorgerosas.freeappblocker.utils.Constants.USAGE_CHECK_MS
 import com.jorgerosas.freeappblocker.utils.getCurrentPackage
+import com.jorgerosas.freeappblocker.utils.goHome
 
 class ForegroundAppTrackingService : AccessibilityService() {
     private var currentPackage: String? = null
@@ -23,6 +24,7 @@ class ForegroundAppTrackingService : AccessibilityService() {
 
                 if (currentPackageUseTimeMs >= FIXED_LIMIT_MS) {
                     Log.d(TAG, "BLOCK $it")
+                    this@ForegroundAppTrackingService.goHome()
                     return
                 }
 

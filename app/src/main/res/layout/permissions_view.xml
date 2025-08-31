@@ -7,10 +7,16 @@
     android:padding="50dp">
 
     <Button
-        android:id="@+id/btnGrantUsagePermissions"
+        android:id="@+id/btnGrantOverlayPermissions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
+        android:text="Grant Overlay Permissions" />
+
+    <Button
+        android:id="@+id/btnGrantUsagePermissions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Grant Usage Permissions" />
 
     <Button
