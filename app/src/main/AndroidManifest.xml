@@ -24,6 +24,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".views.BlockingScreenView"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask" />
+
         <service
             android:name=".service.ForegroundAppTrackingService"
             android:exported="true"
