@@ -9,8 +9,8 @@ import com.jorgerosas.freeappblocker.utils.Constants.QUERY_STATS_INTERVAL_MS
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
 import com.jorgerosas.freeappblocker.views.BlockingScreenView
 
-fun Context.getCurrentPackage(): String? {
-    val usm = this.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+fun getCurrentPackage(context: Context): String? {
+    val usm = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
     val now = System.currentTimeMillis()
 
     // Query usage stats in interval
@@ -29,9 +29,9 @@ fun Context.getCurrentPackage(): String? {
     return stats.maxByOrNull { it.lastTimeUsed }?.packageName
 }
 
-fun Context.showBlockingScreen() {
+fun showBlockingScreen(context: Context) {
     // Go to home
-    this.startActivity(
+    context.startActivity(
         Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_HOME)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -39,8 +39,8 @@ fun Context.showBlockingScreen() {
     )
 
     // Launch blocking screen
-    this.startActivity(
-        Intent(this, BlockingScreenView::class.java).apply {
+    context.startActivity(
+        Intent(context, BlockingScreenView::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
     )
