@@ -1,8 +1,6 @@
 package com.jorgerosas.freeappblocker.utils
 
-import com.jorgerosas.freeappblocker.entity.DailyUsageRuleConfig
 import com.jorgerosas.freeappblocker.entity.PackageSettings
-import com.jorgerosas.freeappblocker.entity.RuleExtensionConfig
 import com.jorgerosas.freeappblocker.entity.SessionLimitRuleConfig
 import com.jorgerosas.freeappblocker.entity.TimeRestriction
 import com.jorgerosas.freeappblocker.entity.TimeRestrictionsRuleConfig
@@ -16,37 +14,65 @@ object Constants {
 
     // TODO Save to persistent config
     val APPS_CONFIG = mapOf(
-        "com.whatsapp" to PackageSettings(
-            name = "com.whatsapp",
+        "com.instagram.android" to PackageSettings(
+            name = "com.instagram.android",
+            sessionLimitRule = SessionLimitRuleConfig(
+                maxSessionMs = 1 * 60 * 1000,
+                blockMs = 5 * 60 * 1000,
+            ),
             timeRestrictionsRule = TimeRestrictionsRuleConfig(
                 restrictions = listOf(
                     TimeRestriction(
-                        day = DayOfWeek.SUNDAY,
-                        start = LocalTime.of(11, 47),
-                        end = LocalTime.of(15, 0),
-                    )
+                        day = DayOfWeek.MONDAY,
+                        start = LocalTime.of(9, 0),
+                        end = LocalTime.of(13, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.MONDAY,
+                        start = LocalTime.of(14, 0),
+                        end = LocalTime.of(18, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.TUESDAY,
+                        start = LocalTime.of(9, 0),
+                        end = LocalTime.of(13, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.TUESDAY,
+                        start = LocalTime.of(14, 0),
+                        end = LocalTime.of(18, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.WEDNESDAY,
+                        start = LocalTime.of(9, 0),
+                        end = LocalTime.of(13, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.WEDNESDAY,
+                        start = LocalTime.of(14, 0),
+                        end = LocalTime.of(18, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.THURSDAY,
+                        start = LocalTime.of(9, 0),
+                        end = LocalTime.of(13, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.THURSDAY,
+                        start = LocalTime.of(14, 0),
+                        end = LocalTime.of(18, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.FRIDAY,
+                        start = LocalTime.of(9, 0),
+                        end = LocalTime.of(13, 0)
+                    ),
+                    TimeRestriction(
+                        day = DayOfWeek.FRIDAY,
+                        start = LocalTime.of(14, 0),
+                        end = LocalTime.of(18, 0)
+                    ),
                 ),
-                extension = RuleExtensionConfig(
-                    amount = 3,
-                    extensionTimeMs = 10_000,
-                )
-            )
-        ),
-        "com.instagram.android" to PackageSettings(
-            name = "com.instagram.android",
-            dailyUsageRule = DailyUsageRuleConfig(
-                dailyLimitMs = (26 * 60 * 1000).toLong(),
-                extension = RuleExtensionConfig(
-                    amount = 2,
-                    extensionTimeMs = 5_000,
-                )
-            ),
-        ),
-        "com.android.chrome" to PackageSettings(
-            name = "com.android.chrome",
-            sessionLimitRule = SessionLimitRuleConfig(
-                maxSessionMs = 10000,
-                blockMs = 10000,
             ),
         ),
     )
