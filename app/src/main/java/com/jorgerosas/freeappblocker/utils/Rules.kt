@@ -51,7 +51,7 @@ class Rules private constructor() {
         }
 
         config?.dailyUsageRule?.let { dailyUsageRule ->
-            val todayUsageMs = Stats.INSTANCE.getTodayUsageInMsFor(
+            val todayUsageMs = Stats.INSTANCE.getLastReportedUsageMs(
                 context,
                 packageName,
             )
@@ -69,6 +69,7 @@ class Rules private constructor() {
     }
 
     fun checkPackageState(
+        context: Context,
         packageName: String,
         startTimeMs: Long,
         shouldBlock: (Boolean) -> Unit,
@@ -95,6 +96,22 @@ class Rules private constructor() {
                 Log.d(
                     TAG,
                     "BLOCK USAGE $packageName [day:${timeRestriction.day}][start:${timeRestriction.start}][end:${timeRestriction.end}]"
+                )
+                result = true
+            }
+        }
+
+        config?.dailyUsageRule?.let { dailyUsageRule ->
+            val sessionTimeMs = System.currentTimeMillis() - startTimeMs
+            val todayUsageMs = Stats.INSTANCE.getLastReportedUsageMs(
+                context,
+                packageName,
+            ) + sessionTimeMs
+
+            if (todayUsageMs > dailyUsageRule.dailyLimitMs) {
+                Log.d(
+                    TAG,
+                    "BLOCK USAGE $packageName [today_usage:$todayUsageMs][daily_limit:${dailyUsageRule.dailyLimitMs}]"
                 )
                 result = true
             }

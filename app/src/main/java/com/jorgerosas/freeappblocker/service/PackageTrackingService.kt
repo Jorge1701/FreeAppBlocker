@@ -20,6 +20,7 @@ class PackageTrackingService : AccessibilityService() {
         override fun run() {
             this@PackageTrackingService.currentPackage?.let { packageName ->
                 Rules.INSTANCE.checkPackageState(
+                    context = this@PackageTrackingService,
                     packageName,
                     startTimeMs
                 ) { shouldBlock ->

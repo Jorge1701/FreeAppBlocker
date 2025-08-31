@@ -32,11 +32,8 @@ object Constants {
         ),
         "com.instagram.android" to PackageSettings(
             name = "com.instagram.android",
-            sessionLimitRule = SessionLimitRule(
-                maxSessionMs = 3000,
-            ),
             dailyUsageRule = DailyUsageRule(
-                dailyLimitMs = 10 * 60 * 1000
+                dailyLimitMs = (60 * 60 * 1000).toLong()
             ),
         ),
         "com.android.chrome" to PackageSettings(
