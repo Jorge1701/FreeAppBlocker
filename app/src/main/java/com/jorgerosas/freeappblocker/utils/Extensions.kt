@@ -30,14 +30,14 @@ class Extensions private constructor() {
     fun hasActiveExtension(
         packageName: String,
         rule: RuleType,
-        extensionTimeMs: Long
+        configuredExtensionTimeMs: Long
     ): Boolean {
         return CONSUMED_EXTENSIONS
             .lastOrNull { it.packageName == packageName && it.rule == rule }
             ?.let { lastExtension ->
                 val extensionActiveTimeMs =
                     System.currentTimeMillis() - lastExtension.activationTimeMs
-                extensionTimeMs > extensionActiveTimeMs
+                configuredExtensionTimeMs > extensionActiveTimeMs
             } ?: false
     }
 }
