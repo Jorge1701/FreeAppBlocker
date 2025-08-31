@@ -1,4 +1,4 @@
-package com.jorgerosas.freeappblocker.rules
+package com.jorgerosas.freeappblocker.utils
 
 import android.util.Log
 import com.jorgerosas.freeappblocker.entity.TimeRestriction
