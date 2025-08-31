@@ -5,10 +5,10 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
-import com.jorgerosas.freeappblocker.rules.Rules
+import com.jorgerosas.freeappblocker.utils.Rules
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
 import com.jorgerosas.freeappblocker.utils.Constants.USAGE_CHECK_MS
-import com.jorgerosas.freeappblocker.utils.getCurrentPackage
+import com.jorgerosas.freeappblocker.utils.Stats
 import com.jorgerosas.freeappblocker.utils.showBlockingScreen
 
 class PackageTrackingService : AccessibilityService() {
@@ -37,7 +37,7 @@ class PackageTrackingService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            val newPackage = getCurrentPackage(
+            val newPackage = Stats.INSTANCE.getPackageBeingUsed(
                 context = this
             ) ?: return
 
