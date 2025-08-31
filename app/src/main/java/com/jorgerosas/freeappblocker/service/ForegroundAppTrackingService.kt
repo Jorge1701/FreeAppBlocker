@@ -41,7 +41,9 @@ class ForegroundAppTrackingService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            val newPackage = baseContext.getCurrentPackage() ?: return
+            val newPackage = getCurrentPackage(
+                context = this
+            ) ?: return
 
             if (newPackage != currentPackage) {
                 handler.removeCallbacks(timerTask)

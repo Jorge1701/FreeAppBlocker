@@ -9,8 +9,8 @@ import com.jorgerosas.freeappblocker.utils.Constants.QUERY_STATS_INTERVAL_MS
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
 import com.jorgerosas.freeappblocker.views.BlockingScreenView
 
-fun Context.getCurrentPackage(): String? {
-    val usm = this.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+fun getCurrentPackage(context: Context): String? {
+    val usm = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
     val now = System.currentTimeMillis()
 
     // Query usage stats in interval
