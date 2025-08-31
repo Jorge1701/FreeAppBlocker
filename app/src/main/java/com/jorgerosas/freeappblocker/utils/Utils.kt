@@ -3,9 +3,11 @@ package com.jorgerosas.freeappblocker.utils
 import android.app.usage.UsageStats
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import com.jorgerosas.freeappblocker.utils.Constants.QUERY_STATS_INTERVAL_MS
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
+import com.jorgerosas.freeappblocker.views.BlockingScreenView
 
 fun Context.getCurrentPackage(): String? {
     val usm = this.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
@@ -25,4 +27,21 @@ fun Context.getCurrentPackage(): String? {
 
     // Find the package with the latest lastTimeUsed
     return stats.maxByOrNull { it.lastTimeUsed }?.packageName
+}
+
+fun Context.showBlockingScreen() {
+    // Go to home
+    this.startActivity(
+        Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_HOME)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+    )
+
+    // Launch blocking screen
+    this.startActivity(
+        Intent(this, BlockingScreenView::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+    )
 }

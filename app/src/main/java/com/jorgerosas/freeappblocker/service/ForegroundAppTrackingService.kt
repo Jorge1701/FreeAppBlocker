@@ -5,10 +5,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import com.jorgerosas.freeappblocker.utils.Constants.PACKAGES_TO_CHECK
 import com.jorgerosas.freeappblocker.utils.Constants.FIXED_LIMIT_MS
 import com.jorgerosas.freeappblocker.utils.Constants.TAG
 import com.jorgerosas.freeappblocker.utils.Constants.USAGE_CHECK_MS
 import com.jorgerosas.freeappblocker.utils.getCurrentPackage
+import com.jorgerosas.freeappblocker.utils.showBlockingScreen
 
 class ForegroundAppTrackingService : AccessibilityService() {
     private var currentPackage: String? = null
@@ -23,6 +25,7 @@ class ForegroundAppTrackingService : AccessibilityService() {
 
                 if (currentPackageUseTimeMs >= FIXED_LIMIT_MS) {
                     Log.d(TAG, "BLOCK $it")
+                    this@ForegroundAppTrackingService.showBlockingScreen()
                     return
                 }
 
@@ -37,6 +40,8 @@ class ForegroundAppTrackingService : AccessibilityService() {
             val newPackage = baseContext.getCurrentPackage() ?: return
 
             if (newPackage != currentPackage) {
+                handler.removeCallbacks(timerTask)
+
                 if (!currentPackage.isNullOrEmpty()) {
                     Log.d(TAG, "CLOSED ${this.currentPackage}");
                 }
@@ -46,8 +51,9 @@ class ForegroundAppTrackingService : AccessibilityService() {
                 startTimeMs = System.currentTimeMillis()
                 currentPackage = newPackage;
 
-                handler.removeCallbacks(timerTask)
-                handler.postDelayed(timerTask, USAGE_CHECK_MS)
+                if (PACKAGES_TO_CHECK.contains(currentPackage)) {
+                    handler.postDelayed(timerTask, USAGE_CHECK_MS)
+                }
             }
         }
     }

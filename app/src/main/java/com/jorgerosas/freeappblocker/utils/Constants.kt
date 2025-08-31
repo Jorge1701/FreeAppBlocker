@@ -6,5 +6,9 @@ object Constants {
     const val USAGE_CHECK_MS = 1000L
 
     // TODO Change for app specific configuration
-    const val FIXED_LIMIT_MS = 10_000
+    const val FIXED_LIMIT_MS = 3_000
+    // TODO Change for user selection
+    val PACKAGES_TO_CHECK = listOf(
+        "com.whatsapp"
+    )
 }
