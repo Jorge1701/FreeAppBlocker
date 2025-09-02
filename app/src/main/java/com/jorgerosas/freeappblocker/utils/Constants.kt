@@ -17,8 +17,8 @@ object Constants {
         "com.instagram.android" to PackageSettings(
             name = "com.instagram.android",
             sessionLimitRule = SessionLimitRuleConfig(
-                maxSessionMs = 1 * 60 * 1000,
-                blockMs = 5 * 60 * 1000,
+                maxSessionMs = 5 * 60 * 1000,
+                blockMs = 15 * 60 * 1000,
             ),
             timeRestrictionsRule = TimeRestrictionsRuleConfig(
                 restrictions = listOf(
