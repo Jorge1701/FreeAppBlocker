@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="50dp">
+    android:fitsSystemWindows="true">
 
     <Button
         android:id="@+id/btnAppList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="App List" />
+        android:text="Configure New App" />
 
     <Button
         android:id="@+id/btnPermissions"
