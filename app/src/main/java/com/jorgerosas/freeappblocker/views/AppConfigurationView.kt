@@ -94,10 +94,10 @@ class AppConfigurationView : AppCompatActivity() {
         findViewById<Spinner>(R.id.spinnerAction).apply {
             adapter = ArrayAdapter(
                 this@AppConfigurationView,
-                android.R.layout.simple_spinner_item,
+                R.layout.spinner_item,
                 ACTION_OPTIONS
             ).apply {
-                setDropDownViewResource(android.R.layout.simple_spinner_item)
+                setDropDownViewResource(R.layout.spinner_drop_down)
             }
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
