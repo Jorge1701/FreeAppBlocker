@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import com.jorgerosas.freeappblocker.R
@@ -20,9 +22,14 @@ import java.util.Calendar
 import java.util.Locale
 
 class AppConfigurationView : AppCompatActivity() {
+    companion object {
+        private val ACTION_OPTIONS = listOf("Block", "Limit")
+    }
+
     private var app: App? = null
     private var startTime: LocalTime? = null
     private var endTime: LocalTime? = null
+    private var action: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,12 +91,32 @@ class AppConfigurationView : AppCompatActivity() {
             }
         }
 
+        findViewById<Spinner>(R.id.spinnerAction).apply {
+            adapter = ArrayAdapter(
+                this@AppConfigurationView,
+                android.R.layout.simple_spinner_item,
+                ACTION_OPTIONS
+            ).apply {
+                setDropDownViewResource(android.R.layout.simple_spinner_item)
+            }
+
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    action = ACTION_OPTIONS[position]
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+        }
+
         findViewById<Button>(R.id.btnSave).setOnClickListener {
-            Log.d(TAG, "Application: ${app?.name}")
-            val selected = days.filter { it.isChecked }.map { it.text.toString() }
-            Log.d(TAG, "Days: $selected")
-            Log.d(TAG, "Start: $startTime")
-            Log.d(TAG, "End: $endTime")
+            val days = days.filter { it.isChecked }.map { it.text.toString() }
+            trySave(app, days, startTime, endTime, action)
         }
     }
 
@@ -105,5 +132,48 @@ class AppConfigurationView : AppCompatActivity() {
             true
         )
         timePicker.show()
+    }
+
+    private fun trySave(
+        app: App?,
+        days: List<String>,
+        startTime: LocalTime?,
+        endTime: LocalTime?,
+        action: String?,
+    ) {
+        if (app == null) {
+            Toast.makeText(this, "Select an application", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (days.isEmpty()) {
+            Toast.makeText(this, "Select at least one day", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (startTime == null) {
+            Toast.makeText(this, "Select a start time", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (endTime == null) {
+            Toast.makeText(this, "Select an end time", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (action == null) {
+            Toast.makeText(this, "Select an action", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        when (action) {
+            "Block" -> {
+                Log.d(TAG, "Application: ${app.name}")
+                Log.d(TAG, "Days: $days")
+                Log.d(TAG, "Start: $startTime")
+                Log.d(TAG, "End: $endTime")
+                Log.d(TAG, "Action: $action")
+            }
+
+            else -> {
+                Toast.makeText(this, "Action not implemented", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
