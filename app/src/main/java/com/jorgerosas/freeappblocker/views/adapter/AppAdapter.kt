@@ -17,7 +17,7 @@ class AppAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_app, parent, false)
+            .inflate(R.layout.app_item, parent, false)
         val app = apps[position]
         view.findViewById<TextView>(R.id.appName).text = app.name
         view.findViewById<ImageView>(R.id.appIcon).setImageDrawable(app.icon)
@@ -25,7 +25,7 @@ class AppAdapter(
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View? {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_app, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.app_drop_down, parent, false)
         val app = apps[position]
         view.findViewById<TextView>(R.id.appName).text = app.name
         view.findViewById<ImageView>(R.id.appIcon).setImageDrawable(app.icon)
