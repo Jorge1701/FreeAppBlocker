@@ -12,6 +12,6 @@
     <color name="background">#282937</color>
     <color name="item_background">#394050</color>
     <color name="text_color">#C5CAEB</color>
-    <color name="asd">#5739F2</color>
+    <color name="primary">#5739F2</color>
     <color name="primary_dark">#3A26A4</color>
 </resources>

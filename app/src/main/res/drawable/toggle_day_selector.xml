@@ -2,7 +2,7 @@
     <!-- When checked -->
     <item android:state_checked="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/asd"/>
+            <solid android:color="@color/primary"/>
             <corners android:radius="8dp"/>
             <padding android:left="8dp" android:top="4dp" android:right="8dp" android:bottom="4dp"/>
         </shape>
